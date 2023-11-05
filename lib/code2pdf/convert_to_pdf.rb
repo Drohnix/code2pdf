@@ -38,11 +38,15 @@ class ConvertToPDF
     html += "<style> .table_style { font-size: 27px } </style>"
 
     read_files.each do |file|
-      html += "<strong style='#{style}'>File: #{file.first}</strong></br></br>"
+	  file_path = file.first
+	  file_path = file_path[file_path.index("de/nordakademie/pdse")..-1]
+	  folders = file_path.split("/")
+	  file_name = folders.pop
+	  html += "<strong style='#{style}'>Package: #{folders.join('.')}<br><br>#{file_name}</strong>"
       html += prepare_line_breaks(syntax_highlight(file)).to_s
       html += add_space(30)
     end
-
+	File.write("/home/nick/git/index.html", html)
     @kit = PDFKit.new(html, page_size: 'A4', margin_left: '0.3in', margin_right: '0.3in')
     @kit
   end
@@ -54,7 +58,7 @@ class ConvertToPDF
 
     theme = Rouge::Themes::Github.new()
     formatter = Rouge::Formatters::HTMLInline.new(theme)
-    formatter = Rouge::Formatters::HTMLTable.new(formatter, start_line: 1, table_class: 'table_style')
+    formatter = Rouge::Formatters::HTMLLineTable.new(formatter, start_line: 1, table_class: 'table_style')
     code_data = file.last.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
     formatter.format(file_lexer.lex(code_data))
   end
