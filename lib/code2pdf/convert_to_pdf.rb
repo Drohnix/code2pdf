@@ -46,7 +46,7 @@ class ConvertToPDF
       html += prepare_line_breaks(syntax_highlight(file)).to_s
       html += add_space(30)
     end
-	File.write("/home/nick/git/index.html", html)
+
     @kit = PDFKit.new(html, page_size: 'A4', margin_left: '0.3in', margin_right: '0.3in')
     @kit
   end
